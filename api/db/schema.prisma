@@ -30,17 +30,18 @@ model User {
 }
 
 model Product {
-  id          String    @id @default(uuid())
-  name        String
-  brand       String
-  description String?
-  imageUrl    String?
-  stock       Int
-  price       Int
-  seller      User      @relation(fields: [sellerId], references: [id])
-  sellerId    String
-  Category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  String?
+  id            String    @id @default(uuid())
+  name          String
+  brand         String
+  description   String?
+  imageUrl      String?
+  stock         Int
+  price         Int
+  seller        User      @relation(fields: [sellerId], references: [id])
+  sellerId      String
+  Category      Category? @relation(fields: [categoryId], references: [id])
+  categoryId    String?
+  category_name String?   @map("category->name")
 }
 
 model Category {

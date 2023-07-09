@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 /* eslint-disable jsx-a11y/label-has-associated-control */
+import { useEffect, useState } from 'react'
+
 import { TbShoppingCart, TbBell, TbMail } from 'react-icons/tb'
 
 import { Link, routes } from '@redwoodjs/router'
@@ -10,9 +12,15 @@ import { useAuth } from 'src/auth'
 import LogoComponent from '../Logo/Logo'
 
 const Navbar = () => {
-  const { isAuthenticated, logOut } = useAuth()
+  const { isAuthenticated, logOut, currentUser } = useAuth()
+  const [userImageUrl, setUserImageUrl] = useState(null)
+  useEffect(() => {
+    if (currentUser) {
+      setUserImageUrl(currentUser.imageUrl)
+    }
+  }, [currentUser])
   return (
-    <div className="bg-base-300">
+    <div className="shadow-xl">
       <div className="navbar mx-auto p-3 lg:max-w-7xl">
         <div className="flex-1">
           <LogoComponent className="w-24" />
@@ -26,10 +34,7 @@ const Navbar = () => {
               <div className="dropdown-end dropdown">
                 <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                   <div className="w-10 rounded-full">
-                    <img
-                      src="https://images.pexels.com/photos/4754648/pexels-photo-4754648.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                      alt="avatar"
-                    />
+                    <img src={userImageUrl} alt="avatar" />
                   </div>
                 </label>
                 <ul
@@ -37,10 +42,12 @@ const Navbar = () => {
                   className="dropdown-content menu rounded-box menu-sm z-[1] mt-3 w-52 bg-base-300 p-2 shadow"
                 >
                   <li>
-                    <a className="justify-between">Profile</a>
-                  </li>
-                  <li>
-                    <a>Settings</a>
+                    <Link
+                      to={routes.editUser({ id: currentUser.id })}
+                      className="justify-between"
+                    >
+                      Profile
+                    </Link>
                   </li>
                   <li>
                     <button onClick={logOut}>Logout</button>

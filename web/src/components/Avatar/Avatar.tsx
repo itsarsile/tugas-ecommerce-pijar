@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-// import { useAuth } from '@redwoodjs/auth'
 import { createClient } from '@supabase/supabase-js'
+
+import { useAuth } from 'src/auth'
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 )
 const Avatar = ({ url, size, onUpload }) => {
-  // const { client: supabase } = useAuth()
+  const { currentUser } = useAuth()
 
   const [avatarUrl, setAvatarUrl] = useState(null)
   const [uploading, setUploading] = useState(false)

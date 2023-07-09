@@ -1,3 +1,5 @@
+import { MantineProvider } from '@mantine/core'
+
 import { FatalErrorBoundary, RedwoodProvider } from '@redwoodjs/web'
 import { RedwoodApolloProvider } from '@redwoodjs/web/apollo'
 
@@ -14,7 +16,9 @@ const App = () => (
     <RedwoodProvider titleTemplate="%PageTitle | %AppTitle">
       <AuthProvider>
         <RedwoodApolloProvider useAuth={useAuth}>
-          <Routes />
+          <MantineProvider theme={{ colorScheme: 'dark' }}>
+            <Routes />
+          </MantineProvider>
         </RedwoodApolloProvider>
       </AuthProvider>
     </RedwoodProvider>

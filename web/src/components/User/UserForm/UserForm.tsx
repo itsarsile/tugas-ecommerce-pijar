@@ -1,3 +1,8 @@
+import { useState } from 'react'
+
+import { PickerInline } from 'filestack-react'
+import type { EditUserById, UpdateUserInput } from 'types/graphql'
+
 import {
   Form,
   FormError,
@@ -8,8 +13,6 @@ import {
   RadioField,
   Submit,
 } from '@redwoodjs/forms'
-
-import type { EditUserById, UpdateUserInput } from 'types/graphql'
 import type { RWGqlError } from '@redwoodjs/forms'
 
 const formatDatetime = (value) => {
@@ -28,8 +31,21 @@ interface UserFormProps {
 }
 
 const UserForm = (props: UserFormProps) => {
-  const onSubmit = (data: FormUser) => {
-    props.onSave(data, props?.user?.id)
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
+
+  const onSubmit = async (data: FormUser) => {
+    const updatedData = {
+      ...data,
+      imageUrl: uploadedImageUrl || props.user?.imageUrl,
+    }
+    props.onSave(updatedData, props?.user?.id)
+  }
+
+  const onFileUpload = (response) => {
+    const uploadedFile = response.filesUploaded[0]
+    if (uploadedFile) {
+      setUploadedImageUrl(uploadedFile.url)
+    }
   }
 
   return (
@@ -100,16 +116,13 @@ const UserForm = (props: UserFormProps) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Image url
+          Image
         </Label>
 
-        <TextField
-          name="imageUrl"
-          defaultValue={props.user?.imageUrl}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
+        <PickerInline
+          apikey={process.env.FILESTACK_API_KEY}
+          onSuccess={onFileUpload}
         />
-
         <FieldError name="imageUrl" className="rw-field-error" />
 
         <Label

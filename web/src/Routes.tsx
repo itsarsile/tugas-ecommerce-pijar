@@ -23,6 +23,8 @@ const Routes = () => {
           <Route path="/users/{id}" page={UserUserPage} name="user" />
           <Route path="/users" page={UserUsersPage} name="users" />
         </Set>
+      </Private>
+      <Private unauthenticated="home" roles={['SELLER', 'ADMIN']}>
         <Set wrap={ScaffoldLayout} title="Products" titleTo="products" buttonLabel="New Product" buttonTo="newProduct">
           <Route path="/products/new" page={ProductNewProductPage} name="newProduct" />
           <Route path="/products/{id}/edit" page={ProductEditProductPage} name="editProduct" />

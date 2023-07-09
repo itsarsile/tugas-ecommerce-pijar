@@ -1,3 +1,8 @@
+import { useState } from 'react'
+
+import { PickerInline } from 'filestack-react'
+import type { EditProductById, UpdateProductInput } from 'types/graphql'
+
 import {
   Form,
   FormError,
@@ -7,9 +12,9 @@ import {
   NumberField,
   Submit,
 } from '@redwoodjs/forms'
-
-import type { EditProductById, UpdateProductInput } from 'types/graphql'
 import type { RWGqlError } from '@redwoodjs/forms'
+
+import { useAuth } from 'src/auth'
 
 type FormProduct = NonNullable<EditProductById['product']>
 
@@ -21,8 +26,23 @@ interface ProductFormProps {
 }
 
 const ProductForm = (props: ProductFormProps) => {
-  const onSubmit = (data: FormProduct) => {
-    props.onSave(data, props?.product?.id)
+  const { currentUser } = useAuth()
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
+
+  const onSubmit = async (data: FormProduct) => {
+    const updatedData = {
+      ...data,
+      sellerId: currentUser?.id,
+      imageUrl: uploadedImageUrl || props.product?.imageUrl,
+    }
+    props.onSave(updatedData, props?.product?.id)
+  }
+
+  const onFileUpload = (response) => {
+    const uploadedFile = response.filesUploaded[0]
+    if (uploadedFile) {
+      setUploadedImageUrl(uploadedFile.url)
+    }
   }
 
   return (
@@ -93,14 +113,12 @@ const ProductForm = (props: ProductFormProps) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Image url
+          Image
         </Label>
 
-        <TextField
-          name="imageUrl"
-          defaultValue={props.product?.imageUrl}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
+        <PickerInline
+          apikey={process.env.FILESTACK_API_KEY}
+          onSuccess={onFileUpload}
         />
 
         <FieldError name="imageUrl" className="rw-field-error" />
@@ -141,7 +159,7 @@ const ProductForm = (props: ProductFormProps) => {
 
         <FieldError name="price" className="rw-field-error" />
 
-        <Label
+        {/* <Label
           name="sellerId"
           className="rw-label"
           errorClassName="rw-label rw-label-error"
@@ -157,7 +175,7 @@ const ProductForm = (props: ProductFormProps) => {
           validation={{ required: true }}
         />
 
-        <FieldError name="sellerId" className="rw-field-error" />
+        <FieldError name="sellerId" className="rw-field-error" /> */}
 
         <div className="rw-button-group">
           <Submit disabled={props.loading} className="rw-button rw-button-blue">
