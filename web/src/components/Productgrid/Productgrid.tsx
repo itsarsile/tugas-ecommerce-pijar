@@ -1,3 +1,4 @@
+import { Link, routes } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
 
 export const QUERY = gql`
@@ -31,18 +32,25 @@ const ProductGrid = () => {
   }
 
   return (
-    <div className="gap- mt-5 grid grid-cols-5">
+    <div className="mx-auto mt-10  grid w-full grid-cols-1 justify-items-center gap-5 lg:grid-cols-5">
       {data.products.map((product) => (
-        <div key={product.id} className="card w-60 bg-base-100 shadow-xl">
-          <figure>
+        <div
+          key={product.id}
+          className="card w-96 bg-base-100  shadow-xl lg:w-60"
+        >
+          <figure className="h-full w-full">
             <img
               src={product.imageUrl}
               alt="product"
-              className="aspect-square max-h-60 object-contain"
+              className="h-full max-h-60 w-full object-cover"
             />
           </figure>
           <div className="card-body">
-            <h2 className="card-title text-slate-800">{product.name}</h2>
+            <h2 className="card-title text-slate-800">
+              <Link to={routes.product({ id: product.id })}>
+                {product.name}
+              </Link>
+            </h2>
             <h2 className="text-lg font-bold text-slate-900">
               {formatPrice(product.price)}
             </h2>
