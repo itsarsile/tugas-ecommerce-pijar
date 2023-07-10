@@ -6,7 +6,7 @@
 # https://redwoodjs.com/docs/app-configuration-redwood-toml
 
 [web]
-  title = "Redwood App"
+  title = "Blanja App"
   port = 8911
   apiUrl = "/api"
   includeEnvironmentVariables = [

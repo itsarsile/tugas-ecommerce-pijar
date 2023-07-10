@@ -1,14 +1,16 @@
+import React, { useState } from 'react'
+
+import type {
+  DeleteProductMutationVariables,
+  FindProducts,
+} from 'types/graphql'
+
 import { Link, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
 import { QUERY } from 'src/components/Product/ProductsCell'
 import { truncate } from 'src/lib/formatters'
-
-import type {
-  DeleteProductMutationVariables,
-  FindProducts,
-} from 'types/graphql'
 
 const DELETE_PRODUCT_MUTATION = gql`
   mutation DeleteProductMutation($id: String!) {
@@ -19,6 +21,8 @@ const DELETE_PRODUCT_MUTATION = gql`
 `
 
 const ProductsList = ({ products }: FindProducts) => {
+  const [searchKeyword, setSearchKeyword] = useState('')
+
   const [deleteProduct] = useMutation(DELETE_PRODUCT_MUTATION, {
     onCompleted: () => {
       toast.success('Product deleted')
@@ -26,12 +30,15 @@ const ProductsList = ({ products }: FindProducts) => {
     onError: (error) => {
       toast.error(error.message)
     },
-    // This refetches the query on the list page. Read more about other ways to
-    // update the cache over here:
-    // https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates
     refetchQueries: [{ query: QUERY }],
     awaitRefetchQueries: true,
   })
+
+  const filterProducts = (products, searchKeyword) => {
+    return products.filter((product) =>
+      product.name.toLowerCase().includes(searchKeyword.toLowerCase())
+    )
+  }
 
   const onDeleteClick = (id: DeleteProductMutationVariables['id']) => {
     if (confirm('Are you sure you want to delete product ' + id + '?')) {
@@ -39,8 +46,17 @@ const ProductsList = ({ products }: FindProducts) => {
     }
   }
 
+  const filteredProducts = filterProducts(products, searchKeyword)
+
   return (
     <div className="rw-segment rw-table-wrapper-responsive">
+      <input
+        className="input"
+        type="text"
+        placeholder="Search products..."
+        value={searchKeyword}
+        onChange={(e) => setSearchKeyword(e.target.value)}
+      />
       <table className="rw-table">
         <thead>
           <tr>
@@ -48,15 +64,15 @@ const ProductsList = ({ products }: FindProducts) => {
             <th>Name</th>
             <th>Brand</th>
             <th>Description</th>
-            <th>Image url</th>
+            <th>Image URL</th>
             <th>Stock</th>
             <th>Price</th>
-            <th>Seller id</th>
+            <th>Seller ID</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <tr key={product.id}>
               <td>{truncate(product.id)}</td>
               <td>{truncate(product.name)}</td>

@@ -26,6 +26,7 @@ const CarouselComponent: React.FC<CarouselComponentProps> = ({
       slidesToScroll={slideToScroll}
       slideGap="md"
       plugins={[autoplay.current]}
+      breakpoints={[{ maxWidth: 'sm', slideSize: '70%' }]}
     >
       {slides.map((slide, index) => (
         <Carousel.Slide key={index}>

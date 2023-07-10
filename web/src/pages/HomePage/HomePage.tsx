@@ -30,9 +30,9 @@ const HomePage = () => {
   ]
 
   return (
-    <>
+    <div className="mx-3">
       <MetaTags title="Home" description="Home page" />
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="mx-auto mt-5 max-w-7xl">
         {/* FEATURED CAROUSEL */}
         <CarouselComponent
@@ -60,7 +60,7 @@ const HomePage = () => {
         </div>
         {isAuthenticated && <ProductGrid />}
       </div>
-    </>
+    </div>
   )
 }
 
